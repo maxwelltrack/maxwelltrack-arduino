@@ -1,0 +1,34 @@
+# MaxwellTrack - Arduino IDE syntax highlighting
+# Fields are separated by a single true tab, not spaces.
+
+MaxwellTrack	KEYWORD1
+MaxwellTrackClass	KEYWORD1
+MaxwellWriteHandler	KEYWORD1
+MaxwellConnectionHandler	KEYWORD1
+
+begin	KEYWORD2
+beginGSM	KEYWORD2
+beginProvisioned	KEYWORD2
+run	KEYWORD2
+write	KEYWORD2
+virtualWrite	KEYWORD2
+sendBatch	KEYWORD2
+onWrite	KEYWORD2
+onConnectionChange	KEYWORD2
+connected	KEYWORD2
+mqttState	KEYWORD2
+queuedMessages	KEYWORD2
+droppedMessages	KEYWORD2
+useTransport	KEYWORD2
+setServer	KEYWORD2
+setSignal	KEYWORD2
+setHeartbeatInterval	KEYWORD2
+setQueueSize	KEYWORD2
+setMaxPayload	KEYWORD2
+setRootCA	KEYWORD2
+setResetPin	KEYWORD2
+isProvisioned	KEYWORD2
+clearProvisioning	KEYWORD2
+
+MAXWELLTRACK_VERSION	LITERAL1
+MIOT_FW_VERSION	LITERAL1

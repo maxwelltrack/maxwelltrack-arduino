@@ -1,0 +1,41 @@
+{
+  "name": "MaxwellTrack",
+  "version": "1.1.0",
+  "description": "Connect any Arduino board to the MaxwellTrack IoT cloud over WiFi or cellular (GSM/LTE). Secure per-device MQTT over TLS, automatic reconnect, datastream telemetry, and dashboard commands. WiFi is optional - non-WiFi boards connect over a cellular modem.",
+  "keywords": "iot, mqtt, esp32, esp8266, stm32, gsm, cellular, cloud, tls, maxwelltrack",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/maxwelltrack/maxwelltrack-arduino.git"
+  },
+  "authors": [
+    {
+      "name": "MaxwellTrack",
+      "url": "https://maxwelltrack.com",
+      "maintainer": true
+    }
+  ],
+  "license": "LicenseRef-Proprietary",
+  "homepage": "https://maxwelltrack.com",
+  "frameworks": "arduino",
+  "platforms": [
+    "espressif32",
+    "espressif8266",
+    "ststm32",
+    "raspberrypi",
+    "atmelsam",
+    "atmelavr"
+  ],
+  "headers": "maxwelltrack.h",
+  "dependencies": {
+    "knolleary/PubSubClient": "^2.8"
+  },
+  "build": {
+    "extraScript": "pio_build.py",
+    "libLDFMode": "chain+"
+  },
+  "export": {
+    "exclude": [
+      "BUILD_INFO.txt"
+    ]
+  }
+}
