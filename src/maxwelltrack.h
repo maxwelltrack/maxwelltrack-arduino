@@ -113,7 +113,7 @@ public:
   // Hold this pin LOW for holdMs to forget WiFi and reopen setup.
   void setResetPin(int pin, unsigned long holdMs = 5000);
 
-  // Verify the broker certificate against this root CA (PEM). Without it the
+  // Verify the server certificate against this root CA (PEM). Without it the
   // connection is encrypted but the server is not authenticated. ESP8266 also
   // needs the clock set (configTime) before begin().
   void setRootCA(const char* pem);
@@ -168,9 +168,10 @@ public:
 
   bool connected();
 
-  // PubSubClient state: 0 connected, -1 disconnected, -2 connect/TLS failed,
-  // -3 lost, -4 timeout, 1-5 refused (5 = bad token).
-  int mqttState();
+  // 0 connected, -1 disconnected, -2 connect/TLS failed, -3 lost,
+  // -4 timeout, 1-5 refused (5 = bad token).
+  int connectionState();
+  int mqttState() { return connectionState(); }
 
   size_t queuedMessages();
   unsigned long droppedMessages();
@@ -180,7 +181,7 @@ public:
   // Use an external Client on this instance (call before begin()).
   void useTransport(Client& transport);
 
-  // Broker override; the default is mqtt.maxwelltrack.com:443.
+  // Server override, for private deployments.
   void setServer(const char* host, int port);
 
   // Cellular signal for heartbeats (WiFi boards report RSSI themselves).
@@ -192,7 +193,7 @@ public:
   // Bytes kept for messages sent while offline (oldest dropped when full).
   void setQueueSize(size_t bytes);
 
-  // Largest MQTT packet (topic + payload). Default 512 (256 on AVR).
+  // Largest message the device sends or receives. Default 512 (256 on AVR).
   void setMaxPayload(size_t bytes);
 
 private:

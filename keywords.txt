@@ -16,7 +16,7 @@ sendBatch	KEYWORD2
 onWrite	KEYWORD2
 onConnectionChange	KEYWORD2
 connected	KEYWORD2
-mqttState	KEYWORD2
+connectionState	KEYWORD2
 queuedMessages	KEYWORD2
 droppedMessages	KEYWORD2
 useTransport	KEYWORD2

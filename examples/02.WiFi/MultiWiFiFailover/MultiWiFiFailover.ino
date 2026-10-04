@@ -4,13 +4,13 @@
   A resilient connection pattern for sites with more than one network:
     - Tries the first network in the list; if it is not found or does not
       connect within a timeout, moves on to the next.
-    - Once WiFi is up, the library handles the secure MQTT connection.
+    - Once WiFi is up, the library handles the secure cloud connection.
     - Sends temperature + humidity to datastreams V0/V1 every 10 seconds.
     - If WiFi drops, restarts the failover from the first network.
     - If every network fails, restarts the ESP32 to try again from scratch.
 
   The sketch owns WiFi here (so it can fail over between networks), so begin()
-  is called with EMPTY ssid/pass - the library then manages only MQTT. Call
+  is called with EMPTY ssid/pass - the library then manages only the cloud connection. Call
   MaxwellTrack.run() once WiFi is connected.
 
   Setup:
@@ -96,7 +96,7 @@ void setup() {
 
   connectToWiFi();
 
-  // Empty ssid/pass: the sketch manages WiFi, the library manages MQTT only.
+  // Empty ssid/pass: the sketch manages WiFi, the library manages the cloud connection only.
   MaxwellTrack.begin(DEVICE_ID, AUTH_TOKEN, "", "");
   MaxwellTrack.onWrite(onDashboardWrite);
 }
@@ -121,10 +121,10 @@ void loop() {
       }
     }
     delay(10);
-    return;  // do not run MQTT until WiFi is up
+    return;  // do not talk to the cloud until WiFi is up
   }
 
-  // --- Connected: keep MQTT alive and publish readings ---
+  // --- Connected: keep the cloud connection alive and send readings ---
   MaxwellTrack.run();  // keep this in loop() while connected
 
   static unsigned long lastSend = 0;

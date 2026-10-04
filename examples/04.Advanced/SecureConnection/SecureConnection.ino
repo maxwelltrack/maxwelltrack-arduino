@@ -3,10 +3,10 @@
 
   By default the connection is encrypted but the device does not check who it
   is talking to. Giving it the cloud's root certificate makes it refuse any
-  server that cannot prove it is the real MaxwellTrack broker.
+  server that cannot prove it is the real MaxwellTrack cloud.
 
-    1. Get the root CA certificate of mqtt.maxwelltrack.com in PEM format
-       (from MaxwellTrack support, or export it from your browser).
+    1. Get the MaxwellTrack cloud root CA certificate in PEM format from
+       MaxwellTrack support.
     2. Paste it into ROOT_CA below, including the BEGIN/END lines.
 
   Certificates are checked against the current date, so the clock is set

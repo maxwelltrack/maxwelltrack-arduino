@@ -114,11 +114,11 @@ void setup() {
   SerialMon.println("\n[5] Bind SSL context 0 to session 0...");
   atSend("AT+CCHSSLCFG=0,0", 2000);
 
-  SerialMon.println("\n[6] THE TEST - open TLS socket to the broker...");
+  SerialMon.println("\n[6] THE TEST - open TLS socket to the MaxwellTrack cloud...");
   String r = atSend(String("AT+CCHOPEN=0,\"") + HOST + "\"," + PORT + ",2", 40000, "+CCHOPEN:");
 
   if (r.indexOf("+CCHOPEN: 0,0") != -1) {
-    VERDICT = "TLS RESULT: SUCCESS - modem opened TLS to mqtt.maxwelltrack.com:443. "
+    VERDICT = "TLS RESULT: SUCCESS - modem opened TLS to the MaxwellTrack cloud. "
               "Fix is software; I will build the secure client (no firmware flash).";
   } else {
     // Pull the error number out of "+CCHOPEN: 0,<err>" for a precise verdict.

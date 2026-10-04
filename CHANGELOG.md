@@ -11,7 +11,8 @@
 ### New features
 - `onWrite("V1", handler)`: a handler per datastream pin.
 - `onConnectionChange(handler)`: called when the cloud connection goes up or down.
-- `setRootCA(pem)`: verify the broker certificate (ESP32 / ESP8266).
+- `setRootCA(pem)`: verify the server certificate (ESP32 / ESP8266).
+- `connectionState()`: the connection status as a number, for diagnostics.
 - `queuedMessages()`, `droppedMessages()`, `setQueueSize()`, `setMaxPayload()`,
   `setHeartbeatInterval()`.
 - `write()` accepts every integer type and returns whether the message was accepted.
@@ -23,7 +24,7 @@
 - A message too large to send is rejected straight away instead of blocking
   every message queued behind it.
 - Reconnects back off from 2 s to 60 s with a random spread per device, so a
-  fleet does not overload the broker after an outage.
+  fleet does not overload the cloud after an outage.
 - Text values are JSON-escaped, so quotes in a value can no longer break or
   alter the message. Values that look numeric but are not valid JSON numbers
   (`1.2.3`, `007`) are sent as text.

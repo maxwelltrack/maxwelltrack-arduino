@@ -27,7 +27,7 @@
 ---
 
 You give the library a Device ID and an Auth Token from your dashboard. It
-takes care of the TLS connection, reconnects, heartbeats, the offline buffer,
+takes care of the secure connection, reconnects, online status, the offline buffer,
 firmware updates and the message format, so your sketch only sends readings
 and reacts to commands.
 
@@ -59,8 +59,7 @@ void loop() {
 - [Examples](#examples)
 - [API reference](#api-reference)
 - [Memory use](#memory-use)
-- [How the connection works](#how-the-connection-works)
-- [MQTT topics](#mqtt-topics)
+- [Staying connected](#staying-connected)
 - [Troubleshooting](#troubleshooting)
 - [FAQ](#faq)
 - [Security](#security)
@@ -78,7 +77,7 @@ void loop() {
   sent in order after reconnecting. Every message carries an id, so the cloud
   drops duplicates.
 - **Fleet friendly.** Reconnects back off from 2 s to 60 s with a random
-  spread per device, so a thousand devices don't hit the broker at the same
+  spread per device, so a thousand devices don't reconnect at the same
   moment after an outage.
 - **Dashboard control.** One handler for all commands, or one per datastream.
 - **Setup from a phone.** No WiFi password in the sketch: the device opens a
@@ -109,8 +108,8 @@ TLS on the modem itself (`beginGSM`), which needs no TinyGSM and saves memory.
 
 ## Installation
 
-The library depends on [PubSubClient](https://github.com/knolleary/pubsubclient)
-(2.8 or newer). Cellular sketches also use
+The library needs one helper library from the Library Manager,
+[PubSubClient](https://github.com/knolleary/pubsubclient) (2.8 or newer). Cellular sketches also use
 [TinyGSM](https://github.com/vshymanskyy/TinyGSM).
 
 ### Arduino IDE
@@ -134,7 +133,7 @@ lib_deps =
     ; vshymanskyy/TinyGSM      ; for cellular sketches
 ```
 
-PubSubClient is installed automatically. Tested platforms:
+Required libraries are installed automatically. Tested platforms:
 
 | Platform | Boards |
 |---|---|
@@ -202,7 +201,7 @@ keep the connection alive and to receive commands.
 | Any board + SIM800 / SIM7600 via TinyGSM | `MaxwellTrackClass MaxwellTrack(client);` | 03.Cellular/AnyBoardSIM800 |
 
 Any other `Client` works the same way (Ethernet, a different modem library),
-as long as it provides TLS to the broker.
+as long as it provides a secure (TLS) connection.
 
 ## Sending data
 
@@ -306,7 +305,7 @@ before the include:
 | | **SIM7600Diagnostics** | Step-by-step check when a SIM7600 will not connect |
 | 04.Advanced | **OfflineBuffering** | Store-and-forward while offline, connection events |
 | | **MultipleSensors** | Several readings in one message with one timestamp |
-| | **SecureConnection** | Verifying the broker certificate |
+| | **SecureConnection** | Verifying the cloud's certificate |
 
 Each example is compiled on the boards it targets before every release.
 
@@ -351,7 +350,7 @@ buffered.
 | Call | |
 |---|---|
 | `connected()` | `true` while connected to the cloud. |
-| `mqttState()` | `0` connected, `-1` disconnected, `-2` connect/TLS failed, `-3` lost, `-4` timeout, `5` bad token. |
+| `connectionState()` | `0` connected, `-1` disconnected, `-2` connect/TLS failed, `-3` lost, `-4` timeout, `5` bad token. |
 | `queuedMessages()` | Messages waiting in the offline buffer. |
 | `droppedMessages()` | Messages dropped because the buffer was full. |
 | `isProvisioned()` | WiFi boards: credentials are stored from the phone app. |
@@ -363,14 +362,14 @@ Call these before `begin()` unless noted.
 | Call | Default | |
 |---|---|---|
 | `setQueueSize(bytes)` | see [Memory use](#memory-use) | Offline buffer size. |
-| `setMaxPayload(bytes)` | see [Memory use](#memory-use) | Largest MQTT packet, 64 to 65535. |
+| `setMaxPayload(bytes)` | see [Memory use](#memory-use) | Largest message, 64 to 65535 bytes. |
 | `setHeartbeatInterval(ms)` | `10000` | Keep below the cloud's 45 s offline timeout. |
 | `setSignal(rssi)` | | Cellular signal reported in heartbeats; call any time. |
-| `setRootCA(pem)` | off | Verify the broker certificate (WiFi boards). |
+| `setRootCA(pem)` | off | Verify the cloud's certificate (WiFi boards). |
 | `setResetPin(pin, ms)` | off | Holding the pin low for `ms` forgets WiFi and reopens setup. |
 | `clearProvisioning()` | | Forget the WiFi credentials stored from the app. |
 | `useTransport(client)` | | Switch an existing instance to another `Client`. |
-| `setServer(host, port)` | `mqtt.maxwelltrack.com:443` | Broker override, for private deployments. |
+| `setServer(host, port)` | MaxwellTrack cloud | Server override, for private MaxwellTrack deployments. |
 
 ## Memory use
 
@@ -387,37 +386,24 @@ them with `setQueueSize()` / `setMaxPayload()` if you have RAM to spare.
 The buffer and the packet memory are allocated once at `begin()` and reused,
 so sending does not grow or fragment the heap.
 
-## How the connection works
+## Staying connected
 
-You call `run()` continuously from `loop()`. Each call:
+`run()` keeps the device connected; call it on every pass of `loop()`. It:
 
-1. Checks WiFi when the library manages it, and retries every 10 seconds if
-   it is down.
-2. Connects to `mqtt.maxwelltrack.com:443` over TLS if needed. The MQTT
-   username is the Device ID and the password is the Auth Token. Failed
-   attempts back off from 2 s up to 60 s, randomized per device.
-3. On connect, registers a Last Will that marks the device offline if it
-   drops, subscribes to its command and OTA topics, and sends the offline
-   buffer.
-4. Sends a heartbeat (online, signal strength, uptime, firmware version)
-   every 10 seconds.
+- reconnects WiFi (when the library manages it) and the cloud connection on
+  its own, waiting longer between attempts while the cloud is unreachable;
+- keeps the device shown as online in the dashboard, with signal strength,
+  uptime and firmware version;
+- lets the dashboard mark the device offline when it loses power or
+  connection;
+- delivers dashboard commands and firmware updates, and sends buffered
+  readings once the connection is back.
 
 You never need reconnect code in your sketch.
 
-## MQTT topics
-
-Used under the hood; handy when debugging with an MQTT client.
-
-| Topic | Direction | Purpose |
-|---|---|---|
-| `miot/d/<deviceId>/telemetry` | device → cloud | Readings |
-| `miot/d/<deviceId>/status` | device → cloud | Heartbeat and Last Will |
-| `miot/d/<deviceId>/command` | cloud → device | Dashboard commands |
-| `miot/d/<deviceId>/ota` | cloud → device | Firmware update offers |
-
 ## Troubleshooting
 
-**`failed, rc=5`.** The broker rejected the credentials. Check that the Device
+**`failed, rc=5`.** The cloud rejected the credentials. Check that the Device
 ID and Auth Token match the dashboard exactly, with no extra spaces, and that
 the device exists in your account.
 
@@ -446,9 +432,9 @@ ESP8266's RAM. Avoid big buffers and building large `String`s in `loop()`.
 each supported processor. You get the header, the examples and the compiled
 code; the Arduino IDE and PlatformIO link it automatically.
 
-**Can I use my own MQTT broker?** `setServer()` exists for private MaxwellTrack
-deployments. The message format is MaxwellTrack's, so a generic broker
-without the MaxwellTrack cloud behind it won't show anything in a dashboard.
+**Can I connect to my own server?** The library is made for the MaxwellTrack
+cloud. `setServer()` exists for private MaxwellTrack deployments; contact us
+if you need one.
 
 **Does it work without the Arduino `loop()` running often?** Commands and
 heartbeats are handled inside `run()`, so it has to be called regularly. Use
@@ -462,9 +448,9 @@ function from the same task.
 - The device authenticates with its own Device ID and Auth Token, so a leaked
   token affects only that device and can be revoked from the dashboard.
 - Traffic is encrypted with TLS. Call `setRootCA()` to also verify the
-  broker certificate (see *04.Advanced/SecureConnection*).
-- The broker address is built in and is not a secret; security comes from the
-  per-device token.
+  cloud's certificate (see *04.Advanced/SecureConnection*).
+- Security rests on the per-device token and encryption, never on keeping
+  the server address secret.
 - Never put account passwords or other devices' tokens in firmware.
 
 Found a security problem? Email security@maxwelltrack.com rather than posting
