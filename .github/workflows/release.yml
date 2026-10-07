@@ -1,0 +1,34 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish or refresh the release for the version in library.properties
+        env:
+          GH_TOKEN: ${{ secrets.PUBLIC_REPO_TOKEN || github.token }}
+        run: |
+          version=$(sed -n 's/^version=//p' library.properties | tr -d '\r')
+          tag="v$version"
+          zip="/tmp/pkg/MaxwellTrack-$version.zip"
+          mkdir -p /tmp/pkg/MaxwellTrack
+          git archive HEAD | tar -x -C /tmp/pkg/MaxwellTrack
+          rm -rf /tmp/pkg/MaxwellTrack/.github
+          (cd /tmp/pkg && zip -qr "MaxwellTrack-$version.zip" MaxwellTrack)
+          awk -v v="## $version" '$0 == v {on=1; next} on && /^## / {exit} on' CHANGELOG.md > /tmp/notes.md
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release edit "$tag" --notes-file /tmp/notes.md
+            gh release upload "$tag" "$zip" --clobber
+          else
+            gh release create "$tag" "$zip" --target "$GITHUB_SHA" \
+              --title "MaxwellTrack $version" --notes-file /tmp/notes.md --latest
+          fi

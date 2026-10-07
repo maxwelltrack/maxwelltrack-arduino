@@ -1,0 +1,29 @@
+MaxwellTrack Arduino Library - License
+
+Copyright (c) 2026 MaxwellTrack. All rights reserved.
+
+The MaxwellTrack Arduino Library ("the Library") is distributed in
+precompiled form together with its public header, examples and
+documentation.
+
+1. You may use the Library, unmodified, in your own devices and firmware,
+   including commercial products, to connect them to the MaxwellTrack cloud.
+
+2. You may copy, modify and distribute the examples as part of your own
+   firmware.
+
+3. You may not decompile, disassemble or reverse-engineer the compiled parts
+   of the Library, except to the extent that applicable law expressly allows
+   it despite this restriction.
+
+4. You may not redistribute the Library itself, alone or as part of another
+   library or SDK, without written permission from MaxwellTrack. Distributing
+   firmware binaries that contain the Library is allowed.
+
+5. The Library is provided "as is", without warranty of any kind, express or
+   implied, including the warranties of merchantability, fitness for a
+   particular purpose and non-infringement. In no event shall MaxwellTrack be
+   liable for any claim, damages or other liability arising from the use of
+   the Library.
+
+Contact: support@maxwelltrack.com
