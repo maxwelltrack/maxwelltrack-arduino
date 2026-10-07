@@ -1,0 +1,16 @@
+name: Remove v1.1.0 release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  remove:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete the v1.1.0 release and its tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release delete v1.1.0 --cleanup-tag --yes --repo "$GITHUB_REPOSITORY"
