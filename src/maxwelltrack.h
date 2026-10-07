@@ -59,10 +59,24 @@
 
 #include <PubSubClient.h>
 
-#define MAXWELLTRACK_VERSION "1.1.0"
+#define MAXWELLTRACK_VERSION "1.2.0"
 
-#ifndef MIOT_FW_VERSION
-#define MIOT_FW_VERSION ""
+// Firmware version reported to the dashboard. Define it before the include,
+// or let a build service write maxwelltrack_version.h (or the older
+// miot_version.h) next to this header.
+#if defined(__has_include)
+  #if __has_include("maxwelltrack_version.h")
+    #include "maxwelltrack_version.h"
+  #elif __has_include("miot_version.h")
+    #include "miot_version.h"
+  #endif
+#endif
+#ifndef MAXWELLTRACK_FW_VERSION
+  #ifdef MIOT_FW_VERSION
+    #define MAXWELLTRACK_FW_VERSION MIOT_FW_VERSION
+  #else
+    #define MAXWELLTRACK_FW_VERSION ""
+  #endif
 #endif
 
 // Called for dashboard -> device commands: pin is the datastream ("V1" or its
@@ -91,20 +105,20 @@ public:
   // sketch manages the network. All strings must stay valid while running.
   void begin(const char* deviceId, const char* authToken,
              const char* ssid = "", const char* pass = "") {
-    beginImpl(deviceId, authToken, ssid, pass, MIOT_FW_VERSION, &Serial);
+    beginImpl(deviceId, authToken, ssid, pass, MAXWELLTRACK_FW_VERSION, &Serial);
   }
 
   // ESP32 + SIM7600: pass the modem's serial port, already registered on the
   // network. The library handles TLS on the modem; no TinyGSM needed.
   void beginGSM(Stream& atSerial, const char* deviceId, const char* authToken) {
-    beginGSMImpl(atSerial, deviceId, authToken, MIOT_FW_VERSION, &Serial);
+    beginGSMImpl(atSerial, deviceId, authToken, MAXWELLTRACK_FW_VERSION, &Serial);
   }
 
 #if MT_HAS_WIFI
   // WiFi credentials come from the device, not the sketch. Without stored
-  // credentials the device opens a "MIoT-Setup-XXXX" network for the phone app.
+  // credentials the device opens a "MaxwellTrack-Setup-XXXX" network for the phone app.
   void beginProvisioned(const char* deviceId, const char* authToken) {
-    beginProvisionedImpl(deviceId, authToken, MIOT_FW_VERSION, &Serial);
+    beginProvisionedImpl(deviceId, authToken, MAXWELLTRACK_FW_VERSION, &Serial);
   }
 
   bool isProvisioned();

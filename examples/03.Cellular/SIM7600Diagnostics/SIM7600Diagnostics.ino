@@ -29,7 +29,7 @@
 #define MODEM_PWRKEY 4
 
 const char APN[]  = "internet";                 // your carrier APN (TZ: internet)
-const char HOST[] = "mqtt.maxwelltrack.com";    // MaxwellTrack cloud
+const char HOST[] = "cloud.maxwelltrack.com";   // MaxwellTrack IoT Cloud
 const int  PORT   = 443;                        // TLS port
 
 TinyGsm modem(SerialAT);

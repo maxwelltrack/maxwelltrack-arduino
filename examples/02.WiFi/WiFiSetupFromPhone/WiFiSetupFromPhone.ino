@@ -4,7 +4,7 @@
   No WiFi password in the sketch: one firmware for every customer.
 
   First boot (or after a reset):
-    1. The device opens a WiFi network called "MIoT-Setup-XXXX".
+    1. The device opens a WiFi network called "MaxwellTrack-Setup-XXXX".
     2. The MaxwellTrack app joins it, lists nearby networks and sends the one
        you pick. The device tests it before saving, so a wrong password just
        lets you try again.

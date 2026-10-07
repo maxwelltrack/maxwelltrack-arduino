@@ -2,12 +2,12 @@
 
 <p align="center">
   Connect ESP32, ESP8266, STM32, Raspberry Pi Pico, SAMD and AVR boards to the
-  <a href="https://maxwelltrack.com">MaxwellTrack</a> IoT cloud, over WiFi or a
+  <a href="https://maxwelltrack.com">MaxwellTrack IoT Cloud</a>, over WiFi or a
   cellular modem.
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-1.1.0-0a7cff">
+  <img alt="Version" src="https://img.shields.io/badge/version-1.2.0-0a7cff">
   <img alt="Arduino IDE" src="https://img.shields.io/badge/Arduino%20IDE-1.8%20%7C%202.x-00979d?logo=arduino&logoColor=white">
   <img alt="PlatformIO" src="https://img.shields.io/badge/PlatformIO-supported-f5822a?logo=platformio&logoColor=white">
   <img alt="Boards" src="https://img.shields.io/badge/boards-ESP32%20%7C%20ESP8266%20%7C%20STM32%20%7C%20RP2040%20%7C%20SAMD%20%7C%20AVR-555">
@@ -149,7 +149,7 @@ Required libraries are installed automatically. Tested platforms:
 
 ```sh
 arduino-cli config set library.enable_unsafe_install true
-arduino-cli lib install --zip-path MaxwellTrack-1.1.0.zip
+arduino-cli lib install --zip-path MaxwellTrack-1.2.0.zip
 arduino-cli lib install PubSubClient
 ```
 
@@ -283,11 +283,12 @@ the dashboard. Nothing is needed in the sketch beyond calling `run()`.
   before it is accepted; on a mismatch the device keeps the old firmware.
 - The download token is never printed to the serial log.
 
-The version shown in the dashboard comes from `MIOT_FW_VERSION`. Define it
-before the include:
+The version shown in the dashboard comes from `MAXWELLTRACK_FW_VERSION`.
+Define it before the include (a build service can instead write it to a
+`maxwelltrack_version.h` file next to `maxwelltrack.h`):
 
 ```cpp
-#define MIOT_FW_VERSION "1.4.0"
+#define MAXWELLTRACK_FW_VERSION "1.4.0"
 #include <maxwelltrack.h>
 ```
 

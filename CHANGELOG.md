@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.0
+- **Update required:** the library connects to `cloud.maxwelltrack.com`.
+  Earlier versions use a cloud address that is no longer in service and
+  cannot connect.
+- The phone setup network is now called `MaxwellTrack-Setup-XXXX`.
+- `MAXWELLTRACK_FW_VERSION` sets the firmware version shown in the dashboard
+  (the previous name still works), or a build service can write it to a
+  `maxwelltrack_version.h` file next to the library header.
+- ControlFromDashboard example: relay modules that switch on LOW, and the
+  relay state is sent back to the dashboard switch, also after a reconnect.
+
 ## 1.1.0
 
 ### New boards

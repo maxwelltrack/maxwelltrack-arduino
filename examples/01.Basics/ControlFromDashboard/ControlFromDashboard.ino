@@ -6,8 +6,12 @@
     V2  switch  -> relay on RELAY_PIN (0/1)
     V3  slider  -> LED brightness (0-255, PWM)
 
-  Each pin gets its own handler. The device reports the relay state back on
-  V4, so the dashboard always shows what the hardware is really doing.
+  Each pin gets its own handler. After switching the relay the device sends
+  its real state back on V2, so the dashboard switch always shows what the
+  hardware is doing, also after a reconnect.
+
+  Most relay modules switch on when their input is LOW; set RELAY_ACTIVE_LOW
+  to false for one that switches on when HIGH.
 */
 
 #include <maxwelltrack.h>
@@ -22,16 +26,23 @@
 #endif
 
 const int RELAY_PIN = 5;
+const bool RELAY_ACTIVE_LOW = true;
 const int PWM_PIN = 4;
+
+bool relayOn = false;
+
+void setRelay(bool on) {
+  relayOn = on;
+  digitalWrite(RELAY_PIN, (on != RELAY_ACTIVE_LOW) ? HIGH : LOW);
+}
 
 void onLed(String pin, String value) {
   digitalWrite(LED_BUILTIN, value.toInt() ? HIGH : LOW);
 }
 
 void onRelay(String pin, String value) {
-  bool on = value.toInt() != 0;
-  digitalWrite(RELAY_PIN, on ? HIGH : LOW);
-  MaxwellTrack.write("V4", on ? "on" : "off");
+  setRelay(value.toInt() != 0);
+  MaxwellTrack.write("V2", relayOn ? 1 : 0);
 }
 
 void onBrightness(String pin, String value) {
@@ -46,16 +57,23 @@ void onOtherCommand(String pin, String value) {
   Serial.println(value);
 }
 
+// After a reconnect, tell the dashboard the relay state again.
+void onConnection(bool online) {
+  if (online) MaxwellTrack.write("V2", relayOn ? 1 : 0);
+}
+
 void setup() {
   Serial.begin(115200);
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(RELAY_PIN, OUTPUT);
   pinMode(PWM_PIN, OUTPUT);
+  setRelay(false);   // relay off at power-up
 
   MaxwellTrack.onWrite("V1", onLed);
   MaxwellTrack.onWrite("V2", onRelay);
   MaxwellTrack.onWrite("V3", onBrightness);
   MaxwellTrack.onWrite(onOtherCommand);
+  MaxwellTrack.onConnectionChange(onConnection);
 
   MaxwellTrack.begin(DEVICE_ID, AUTH_TOKEN, WIFI_SSID, WIFI_PASS);
 }
