@@ -57,9 +57,9 @@
   #error "MaxwellTrack has no build for this board. Supported: ESP32, ESP8266, STM32, RP2040, SAMD, AVR."
 #endif
 
-#include <PubSubClient.h>
+#include <Client.h>
 
-#define MAXWELLTRACK_VERSION "1.2.0"
+#define MAXWELLTRACK_VERSION "1.3.0"
 
 // Firmware version reported to the dashboard. Define it before the include,
 // or let a build service write maxwelltrack_version.h (or the older
@@ -185,7 +185,6 @@ public:
   // 0 connected, -1 disconnected, -2 connect/TLS failed, -3 lost,
   // -4 timeout, 1-5 refused (5 = bad token).
   int connectionState();
-  int mqttState() { return connectionState(); }
 
   size_t queuedMessages();
   unsigned long droppedMessages();

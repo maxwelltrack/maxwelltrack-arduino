@@ -1,6 +1,6 @@
 {
   "name": "MaxwellTrack",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Connect Arduino boards to the MaxwellTrack IoT Cloud over WiFi or cellular (GSM/LTE). Encrypted per-device connection, offline buffering, automatic reconnect, over-the-air updates, datastream telemetry and dashboard commands. Non-WiFi boards connect over a cellular modem.",
   "keywords": "iot, cloud, esp32, esp8266, stm32, rp2040, gsm, lte, cellular, ota, maxwelltrack",
   "repository": {
@@ -26,9 +26,6 @@
     "atmelavr"
   ],
   "headers": "maxwelltrack.h",
-  "dependencies": {
-    "knolleary/PubSubClient": "^2.8"
-  },
   "build": {
     "extraScript": "pio_build.py",
     "libLDFMode": "chain+"

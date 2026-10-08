@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.0
+- One library to install: no separate helper library is needed anymore.
+- Available in the Arduino IDE Library Manager.
+- Removed the old name of `connectionState()`.
+
 ## 1.2.0
 - **Update required:** earlier versions can no longer connect to the
   MaxwellTrack IoT Cloud.

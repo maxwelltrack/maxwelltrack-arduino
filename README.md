@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-1.2.0-0a7cff">
+  <img alt="Version" src="https://img.shields.io/badge/version-1.3.0-0a7cff">
   <img alt="Arduino IDE" src="https://img.shields.io/badge/Arduino%20IDE-1.8%20%7C%202.x-00979d?logo=arduino&logoColor=white">
   <img alt="PlatformIO" src="https://img.shields.io/badge/PlatformIO-supported-f5822a?logo=platformio&logoColor=white">
   <img alt="Boards" src="https://img.shields.io/badge/boards-ESP32%20%7C%20ESP8266%20%7C%20STM32%20%7C%20RP2040%20%7C%20SAMD%20%7C%20AVR-555">
@@ -108,18 +108,22 @@ TLS on the modem itself (`beginGSM`), which needs no TinyGSM and saves memory.
 
 ## Installation
 
-The library needs one helper library from the Library Manager,
-[PubSubClient](https://github.com/knolleary/pubsubclient) (2.8 or newer). Cellular sketches also use
-[TinyGSM](https://github.com/vshymanskyy/TinyGSM).
+Nothing else is needed for WiFi. Cellular sketches with a SIM800 or other
+TinyGSM modem also use [TinyGSM](https://github.com/vshymanskyy/TinyGSM).
 
-### Arduino IDE
+### Arduino IDE (Library Manager)
+
+1. **Tools → Manage Libraries…**, search for **MaxwellTrack** and click
+   **Install**. For cellular, install **TinyGSM** too.
+2. Open **File → Examples → MaxwellTrack** and start with *HelloCloud*.
+
+The IDE shows an **Update** button when a new version is released.
+
+### Arduino IDE (ZIP)
 
 1. Download `MaxwellTrack-<version>.zip` from the
    [releases page](https://github.com/maxwelltrack/maxwelltrack-arduino/releases).
 2. **Sketch → Include Library → Add .ZIP Library…** and pick the ZIP.
-3. **Tools → Manage Libraries…**, search for **PubSubClient** (by Nick O'Leary)
-   and install it. For cellular, install **TinyGSM** too.
-4. Open **File → Examples → MaxwellTrack** and start with *HelloCloud*.
 
 ### PlatformIO
 
@@ -148,9 +152,7 @@ Required libraries are installed automatically. Tested platforms:
 ### arduino-cli
 
 ```sh
-arduino-cli config set library.enable_unsafe_install true
-arduino-cli lib install --zip-path MaxwellTrack-1.2.0.zip
-arduino-cli lib install PubSubClient
+arduino-cli lib install MaxwellTrack
 ```
 
 ## Quick start
@@ -469,4 +471,5 @@ Copyright © 2026 MaxwellTrack. All rights reserved. See [LICENSE](LICENSE).
 The library is distributed in precompiled form for use with the MaxwellTrack
 cloud. You may use it in your own devices and firmware, including commercial
 products. You may not decompile, reverse-engineer or redistribute the library
-itself.
+itself. Third-party components are listed in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
