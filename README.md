@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-1.3.0-0a7cff">
+  <img alt="Version" src="https://img.shields.io/badge/version-1.3.1-0a7cff">
   <img alt="Arduino IDE" src="https://img.shields.io/badge/Arduino%20IDE-1.8%20%7C%202.x-00979d?logo=arduino&logoColor=white">
   <img alt="PlatformIO" src="https://img.shields.io/badge/PlatformIO-supported-f5822a?logo=platformio&logoColor=white">
   <img alt="Boards" src="https://img.shields.io/badge/boards-ESP32%20%7C%20ESP8266%20%7C%20STM32%20%7C%20RP2040%20%7C%20SAMD%20%7C%20AVR-555">
@@ -278,7 +278,24 @@ See *04.Advanced/OfflineBuffering*.
 ESP32 and ESP8266 devices update themselves when you push a new firmware from
 the dashboard. Nothing is needed in the sketch beyond calling `run()`.
 
+- The dashboard shows each update as it happens: received, downloading with a
+  percentage, restarting, and the reason if it could not be installed.
+- Every update is checked against its checksum before the board switches to it;
+  a damaged download is refused and the board keeps its current firmware.
 - WiFi boards download over HTTPS.
+- ESP32 with any cellular modem the sketch connects through (SIM800C/L, SIM900,
+  SIM7000/7080, SIM7600, A7670, Quectel BG95/BG96 and other TinyGSM modems)
+  updates over the cellular link. A download that stalls on a weak signal
+  continues from where it stopped. The modem must be able to open a secure
+  (TLS 1.2) connection; older SIM800/SIM900 firmware may need a modem firmware
+  update.
+- Raspberry Pi Pico and Pico 2 update over the air through any of those modems.
+  The new firmware is stored in the board's file system area and installed on
+  restart, so the sketch must be built with one at least as large as the
+  firmware: in the Arduino IDE pick a Tools > Flash Size with an FS (for example
+  "2MB (Sketch: 1MB, FS: 1MB)"), in PlatformIO set
+  `board_build.filesystem_size = 1m`.
+- STM32, Arduino Zero, Mega and Uno boards are updated over USB.
 - ESP32 with a SIM7600 downloads over 4G (the modem's HTTP stack when
   available, otherwise a TLS stream).
 - On ESP32 over 4G, when the update carries an MD5 the image is checked

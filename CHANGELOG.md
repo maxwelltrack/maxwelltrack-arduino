@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.3.1
+- Over-the-air updates (ESP32, ESP8266) report their progress to the
+  dashboard: received, downloading with a percentage, restarting, and the
+  reason when an update cannot be installed.
+- Over-the-air updates download faster over WiFi.
+- ESP8266: over-the-air updates no longer fail with "connection failed". The
+  board does not have the memory for two secure connections at once, so its
+  cloud connection now pauses during the download and reconnects afterwards.
+- ESP32 over a cellular modem (SIM800C/L, SIM900, SIM7000/7080, SIM7600,
+  A7670, Quectel BG95/BG96 and other TinyGSM modems): an update that stalls on
+  a weak signal now continues from where it stopped instead of starting over.
+- Raspberry Pi Pico and Pico 2 now update over the air through their modem.
+  The board needs a file system area for the update (Arduino IDE: Tools >
+  Flash Size with an FS; PlatformIO: `board_build.filesystem_size`).
+- Every update is checked against its checksum before the board switches to it,
+  and an update that arrives without one is refused.
+- The firmware version shown in the dashboard is set with
+  `MAXWELLTRACK_FW_VERSION` (define it before the include) or a
+  `maxwelltrack_version.h` file on the include path.
+
 ## 1.3.0
 - One library to install: no separate helper library is needed anymore.
 - Available in the Arduino IDE Library Manager.

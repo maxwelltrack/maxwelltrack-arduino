@@ -26,6 +26,13 @@
   #include <ESP8266WebServer.h>
   #include <EEPROM.h>
   #define MT_PROV_SERVER ESP8266WebServer
+#elif defined(ARDUINO_ARCH_RP2040) && !defined(ARDUINO_ARCH_MBED) && !defined(MT_HOST_TEST)
+  #define MT_HAS_WIFI 0
+  // Over-the-air updates over a modem: the core's updater stores the new image in
+  // the LittleFS area and its boot step installs it on restart. The board needs a
+  // file system (PlatformIO board_build.filesystem_size, Arduino IDE Tools >
+  // Flash Size with an FS) at least as large as the image.
+  #include <Updater.h>
 #else
   #define MT_HAS_WIFI 0
 #endif
@@ -59,24 +66,17 @@
 
 #include <Client.h>
 
-#define MAXWELLTRACK_VERSION "1.3.0"
+#define MAXWELLTRACK_VERSION "1.3.1"
 
 // Firmware version reported to the dashboard. Define it before the include,
-// or let a build service write maxwelltrack_version.h (or the older
-// miot_version.h) next to this header.
+// or let a build service put maxwelltrack_version.h on the include path.
 #if defined(__has_include)
   #if __has_include("maxwelltrack_version.h")
     #include "maxwelltrack_version.h"
-  #elif __has_include("miot_version.h")
-    #include "miot_version.h"
   #endif
 #endif
 #ifndef MAXWELLTRACK_FW_VERSION
-  #ifdef MIOT_FW_VERSION
-    #define MAXWELLTRACK_FW_VERSION MIOT_FW_VERSION
-  #else
-    #define MAXWELLTRACK_FW_VERSION ""
-  #endif
+  #define MAXWELLTRACK_FW_VERSION ""
 #endif
 
 // Called for dashboard -> device commands: pin is the datastream ("V1" or its
